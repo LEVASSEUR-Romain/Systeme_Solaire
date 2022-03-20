@@ -18,7 +18,6 @@ function resize() {
 }
 window.addEventListener("resize", () => {
   resize();
-  animate(0);
 });
 
 function drawSolarSystem() {
@@ -29,42 +28,94 @@ function drawSolarSystem() {
 }
 
 function drawCelestialBody(celestialBody) {
+  //Saves the context in its current state [*0]
   context.save();
+
   context.rotate(celestialBody.orbitalAngle);
+
+  //Translates the coordinate system with the vector (celestialBody.distance ; 0)
   context.translate(celestialBody.distance, 0);
+
+  if (celestialBody.hasShadow) {
+    //Draws a black disque which will be the shadowed part of the planet
+    context.beginPath();
+    context.arc(0, 0, celestialBody.radius, 0, 2 * Math.PI);
+    context.fillStyle = "#000000";
+    context.fill();
+
+    //Saves the current context [*1]
+    context.save();
+
+    //Prepares the drawing of the mask
+    context.beginPath();
+    context.arc(
+      -celestialBody.radius * 2,
+      0,
+      celestialBody.radius * 2,
+      0,
+      2 * Math.PI
+    );
+    /*     // Enregistrez le contexte actuel, préparez le dessin d’un cercle de la taille de la planète et activez le masque.
+    context.save();
+    //  Créez un dégradé radial transparent au centre et noir sur le pourtour. Les coordonnées du dégradé devront correspondre à celles du masque qui a permis de créer la face éclairée de la planète
+    const grd = context.createRadialGradient(
+      0,
+      0,
+      1,
+      celestialBody.radius,
+      0,
+      2 * Math.PI
+    );
+    grd.addColorStop(0, "white");
+    grd.addColorStop(1, "black");
+    context.fillStyle = grd;
+    context.fill();
+    context.restore(); */
+    //Create a mask from the previous prepared drawing
+    context.clip();
+  }
+
+  //Starts the drawing
   context.beginPath();
+
+  //Prepare the drawing of a complete circle
   context.arc(0, 0, celestialBody.radius, 0, 2 * Math.PI);
-  // Creates the pattern and sets the fill style with it
+
+  //Creates a pattern from the texture of the celestial body
   const pattern = context.createPattern(celestialBody.texture, "no-repeat");
-  context.fillStyle = pattern;
+  const coef = (celestialBody.radius * 2) / celestialBody.texture.width;
 
-  // Computes the scale required to apply the pattern at the good dimensions
-  const coefEchelle = (celestialBody.radius * 2) / celestialBody.texture.width;
-
-  // Saves the current context
+  //Saves the current context [*2]
   context.save();
 
-  // Translates the coordinate system to the top right corner of the circle
+  //Rotates the celestial body on its own axis
+  context.rotate(celestialBody.rotationAngle);
+
+  //Moves and scales the coordinate system to apply the pattern
   context.translate(-celestialBody.radius, -celestialBody.radius);
+  context.scale(coef, coef);
 
-  // Sets the scales of the coordinate system horizontally and vertically
-  context.scale(coefEchelle, coefEchelle);
+  //Sets the filling color
+  context.fillStyle = pattern; //celestialBody.color;
 
-  // Fills the previously prepared circle with the scaled pattern
+  //Fills the circle
   context.fill();
 
-  // Restores the coordinate system to its initial state
+  //Restores the context [*2]
   context.restore();
-  /*   const pattern = context.createPattern(celestialBody.texture, "no-repeat");
-  context.fillStyle = pattern;
 
-  context.fill(); */
+  if (celestialBody.hasShadow) {
+    //Restores the context and disable the mask [*1]
+    context.restore();
+  }
 
+  //Draws each satellite of the celestial body
   celestialBody.satellites.forEach((satellite) => {
     drawOrbit(satellite);
     drawCelestialBody(satellite);
   });
 
+  //Restores the context on its initial state [*0]
   context.restore();
 }
 

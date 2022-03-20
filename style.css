@@ -6,7 +6,7 @@
 body {
     width: 100vw;
     height: 100vh;
-    background-color: #1a1a1a;
+    background: radial-gradient(#1a1a1a, #000000);
 }
 
 canvas {

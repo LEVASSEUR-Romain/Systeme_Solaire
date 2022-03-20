@@ -49,3 +49,5 @@ context.fill();
 context.restore();
 
     Modifiez le code de la méthode drawCelestialBody à partir des i
+
+Dégradés => liens vers la doc peu etre
