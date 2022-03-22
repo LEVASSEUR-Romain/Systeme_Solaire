@@ -7,7 +7,7 @@ var ctx = canvas.getContext("2d");
 var x = 250,
   y = 250,
   // Radii of the white glow.
-  innerRadius = 32,
+  innerRadius = 50,
   outerRadius = 70,
   // Radius of the entire circle.
   radius = 60;
