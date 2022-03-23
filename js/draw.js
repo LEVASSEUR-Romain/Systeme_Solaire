@@ -1,16 +1,3 @@
-/* const grd = context.createRadialGradient(
-  0,
-  0,
-  celestialBody.radius,
-  0,
-  0,
-  celestialBody.radius * 3
-);
-grd.addColorStop(0.8, "black");
-grd.addColorStop(1, "white");
-context.fillStyle = grd;
- */
-
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 // chargement image
@@ -99,7 +86,14 @@ function degrade(celestialBody) {
   context.save();
   context.beginPath();
   context.arc(0, 0, celestialBody, 0, 2 * Math.PI);
-  const gradient = context.createLinearGradient(-celestialBody / 2, 0, 0, 0);
+  const gradient = context.createRadialGradient(
+    -celestialBody * 2,
+    0,
+    celestialBody,
+    -celestialBody * 2,
+    0,
+    celestialBody * 2
+  );
   gradient.addColorStop(0, "transparent");
   gradient.addColorStop(1, "black");
   context.fillStyle = gradient;
